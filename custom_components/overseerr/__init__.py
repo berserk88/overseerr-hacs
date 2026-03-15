@@ -8,6 +8,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import DOMAIN, CONF_URL, CONF_API_KEY
 from .api import OverseerrAPI
+from .http_api import async_register_views
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,6 +18,8 @@ PLATFORMS = ["sensor"]
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Set up Overseerr component."""
     hass.data.setdefault(DOMAIN, {})
+    # Register the proxy HTTP views once at component setup
+    async_register_views(hass)
     return True
 
 
