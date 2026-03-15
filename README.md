@@ -1,11 +1,11 @@
 # Overseerr for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-[![GitHub release](https://img.shields.io/github/release/YOUR_GITHUB_USERNAME/overseerr-hacs.svg)](https://github.com/YOUR_GITHUB_USERNAME/overseerr-hacs/releases)
+[![GitHub release](https://img.shields.io/github/release/berserk88/overseerr-hacs.svg)](https://github.com/berserk88/overseerr-hacs/releases)
 
 A Home Assistant integration for [Overseerr](https://overseerr.dev/) — the media request and management tool for Plex ecosystems.
 
-> **Also install the dashboard card:** [overseerr-card-hacs](https://github.com/YOUR_GITHUB_USERNAME/overseerr-card-hacs)
+> **Also install the dashboard card:** [overseerr-card-hacs](https://github.com/berserk88/overseerr-card-hacs)
 
 ---
 
@@ -23,7 +23,7 @@ A Home Assistant integration for [Overseerr](https://overseerr.dev/) — the med
 1. Open HACS in Home Assistant
 2. Go to **Integrations**
 3. Click the three-dot menu → **Custom repositories**
-4. Add: `https://github.com/YOUR_GITHUB_USERNAME/overseerr-hacs` — Category: **Integration**
+4. Add: `https://github.com/berserk88/overseerr-hacs` — Category: **Integration**
 5. Click **Download** on the Overseerr card that appears
 6. Restart Home Assistant
 
