@@ -27,15 +27,12 @@ class OverseerrProxyView(HomeAssistantView):
     requires_auth = True
 
     async def get(self, request: web.Request, path: str) -> web.Response:
-        """Handle GET proxy requests."""
         return await self._proxy(request, path, "GET")
 
     async def post(self, request: web.Request, path: str) -> web.Response:
-        """Handle POST proxy requests."""
         return await self._proxy(request, path, "POST")
 
     async def _proxy(self, request: web.Request, path: str, method: str) -> web.Response:
-        """Forward the request to Overseerr and return the response."""
         hass: HomeAssistant = request.app["hass"]
 
         entries = hass.config_entries.async_entries(DOMAIN)
@@ -46,33 +43,39 @@ class OverseerrProxyView(HomeAssistantView):
         if not api:
             return self._error(503, "Overseerr API not available")
 
-        # Build target URL — preserve the full query string from the incoming request
         base = api._url.rstrip("/")
         target_url = f"{base}/api/v1/{path}"
         if request.query_string:
             target_url += f"?{request.query_string}"
 
-        _LOGGER.debug("Overseerr proxy %s %s", method, target_url)
+        _LOGGER.warning("Overseerr proxy %s -> %s", method, target_url)
 
         try:
-            kwargs: dict[str, Any] = {"headers": api._headers}
-
+            # Use auth-only headers for GET (no Content-Type), JSON headers for POST
             if method == "POST":
+                headers = api._json_headers
                 try:
-                    kwargs["json"] = await request.json()
+                    body = await request.json()
+                    kwargs: dict[str, Any] = {"headers": headers, "json": body}
                 except Exception:
-                    kwargs["data"] = await request.read()
+                    kwargs = {"headers": headers, "data": await request.read()}
+            else:
+                headers = api._auth_headers
+                kwargs = {"headers": headers}
 
             async with api._session.request(method, target_url, **kwargs) as resp:
                 raw = await resp.read()
-                # Detect content type from the upstream response
-                ct = resp.content_type or "application/json"
                 if resp.status >= 400:
                     _LOGGER.warning(
-                        "Overseerr returned %s for %s %s: %s",
-                        resp.status, method, target_url, raw[:200]
+                        "Overseerr %s %s returned %s: %s",
+                        method, target_url, resp.status, raw[:500]
                     )
-                return web.Response(status=resp.status, content_type=ct, body=raw)
+                # Use application/json as content type — Overseerr always returns JSON
+                return web.Response(
+                    status=resp.status,
+                    content_type="application/json",
+                    body=raw,
+                )
 
         except Exception as err:
             _LOGGER.error("Overseerr proxy error %s %s: %s", method, target_url, err)

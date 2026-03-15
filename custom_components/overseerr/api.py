@@ -17,17 +17,28 @@ class OverseerrAPI:
         self._url = url.rstrip("/")
         self._api_key = api_key
         self._session = session
-        self._headers = {
+        # Only the API key header — Content-Type is added per-request only when needed
+        self._auth_headers = {
+            "X-Api-Key": api_key,
+        }
+        # Headers for requests with a JSON body
+        self._json_headers = {
             "X-Api-Key": api_key,
             "Content-Type": "application/json",
+            "Accept": "application/json",
         }
 
     async def _request(self, method: str, endpoint: str, **kwargs) -> Any:
         """Make an API request."""
         url = f"{self._url}/api/v1{endpoint}"
+        # Use JSON headers only for POST/PUT/PATCH, plain auth for GET/DELETE
+        if method.upper() in ("POST", "PUT", "PATCH"):
+            headers = self._json_headers
+        else:
+            headers = self._auth_headers
         try:
             async with self._session.request(
-                method, url, headers=self._headers, **kwargs
+                method, url, headers=headers, **kwargs
             ) as response:
                 response.raise_for_status()
                 return await response.json()
@@ -47,7 +58,7 @@ class OverseerrAPI:
         return await self._request(
             "GET",
             "/search",
-            params={"query": query, "page": page, "language": "en"},
+            params={"query": query, "page": page},
         )
 
     async def get_movie(self, movie_id: int) -> dict:
@@ -64,11 +75,8 @@ class OverseerrAPI:
             "mediaType": media_type,
             "mediaId": media_id,
         }
-        if media_type == "tv" and seasons:
-            payload["seasons"] = seasons
-        elif media_type == "tv":
-            payload["seasons"] = "all"
-
+        if media_type == "tv":
+            payload["seasons"] = seasons if seasons else "all"
         return await self._request("POST", "/request", json=payload)
 
     async def get_requests(self, take: int = 20, skip: int = 0, filter: str = "all") -> dict:
