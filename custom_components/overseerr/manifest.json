@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "documentation": "https://github.com/berserk88/overseerr-hacs",
   "issue_tracker": "https://github.com/berserk88/overseerr-hacs/issues",
-  "codeowners": ["@YOUR_GITHUB_USERNAME"],
+  "codeowners": ["@berserk88"],
   "requirements": [],
   "config_flow": true,
   "iot_class": "local_polling",
