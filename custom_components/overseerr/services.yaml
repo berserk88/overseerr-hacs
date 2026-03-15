@@ -1,0 +1,36 @@
+request_media:
+  name: Request Media
+  description: Request a movie or TV show in Overseerr by TMDB ID.
+  fields:
+    media_type:
+      name: Media Type
+      description: "Type of media to request: 'movie' or 'tv'."
+      required: true
+      example: "movie"
+      selector:
+        select:
+          options:
+            - "movie"
+            - "tv"
+    media_id:
+      name: Media ID
+      description: The TMDB ID of the movie or TV show to request.
+      required: true
+      example: 550
+      selector:
+        number:
+          min: 1
+          max: 9999999
+          mode: box
+
+search:
+  name: Search Media
+  description: Search for movies and TV shows. Fires an overseerr_search_results event with the results.
+  fields:
+    query:
+      name: Search Query
+      description: The search terms to look up.
+      required: true
+      example: "Breaking Bad"
+      selector:
+        text:
