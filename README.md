@@ -97,7 +97,7 @@ automation:
 ## Dashboard Card
 
 Install the companion Lovelace card from the separate HACS repository:
-**[overseerr-card-hacs](https://github.com/YOUR_GITHUB_USERNAME/overseerr-card-hacs)**
+**[overseerr-card-hacs](https://github.com/berserk88/overseerr-card-hacs**
 
 The card provides a full graphical interface for searching and requesting media directly from your Home Assistant dashboard.
 
